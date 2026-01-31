@@ -33,14 +33,14 @@ def main():
     lcd = LCD1602_I2C(bus=1, addr=0x27, backlight=True)
     player = MPlayerSlave(
         cd_url="cdda://",
-        cache_kb=8192,
-        min_percent=20,
+        cache_kb=2048,  # cache_kb=8192,
+        min_percent=5,     # min_percent=20,
         ao="alsa",
     )
 
     # IR device path는 환경마다 다름:
-    # 먼저 `ls /dev/input/by-id/` 또는 `cat /proc/bus/input/devices`로 찾아야 함.
-    ir = IRInputEvdev("/dev/input/event0")
+    # ir-keytable 명령어로 rc 드라이버의 event 번호를 확인해야함.
+    ir = IRInputEvdev("/dev/input/event4")
 
     # 리모컨 키 매핑 (너 키트 리모컨에 맞게 바꾸면 됨)
     KEYMAP = {
@@ -73,7 +73,6 @@ def main():
         action = KEYMAP.get(ev.key)
         if not action:
             return
-
         if action == "start_pause":
             player.toggle_pause()
         elif action == "0key":

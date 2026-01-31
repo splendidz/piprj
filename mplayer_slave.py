@@ -65,7 +65,7 @@ class MPlayerSlave:
             bufsize=1,
         )
 
-        self.curr_track = 0 #0번부터 1번 트랙
+        self.curr_track = 1
         self.send("loadfile cdda://1 0")
 
         #time.sleep(1)
@@ -117,23 +117,21 @@ class MPlayerSlave:
 
     def next_track(self):
         #self.send("pt_step 1")
-        if self.curr_track == self.tr_cnt-1:
+        if self.curr_track == self.tr_cnt:
             return
         new_track = self.curr_track + 1
         self.curr_track += 1
         self.send(f"loadfile cdda://{new_track} 0")
-        # 실제 트랙 번호는 로그/응답으로 갱신될 것
+        print(f"play next: {self.curr_track}tr")
 
     def prev_track(self):
         #self.send("pt_step -1")
-        if self.curr_track == 0 :
-            return
-        
+        if self.curr_track == 1 :
+            return        
         new_track = self.curr_track - 1
-        if new_track == 0:
-            return
         self.send(f"loadfile cdda://{new_track} 0")
         self.curr_track -= 1
+        print(f"play prev: {self.curr_track}tr")
 
     def poll_status(self):
         # slave query
@@ -156,7 +154,7 @@ class MPlayerSlave:
 
     def _parse_line(self, line: str):
 
-        print(f"mplayer log: {line}")
+        #print(f"mplayer log: {line}")
 
         # ANS_... responses
         m = self._re_ans_int.match(line)
